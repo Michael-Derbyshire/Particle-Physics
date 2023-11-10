@@ -16,6 +16,10 @@ icon = pygame.image.load('Images/usw.jpg')
 pygame.display.set_icon(icon)
 env = PyParticles.Environment(width, height)
 
+# Enable the required physics interactions
+env.addFunctions(['move', 'bounce', 'drag', 'accelerate', 'collide'])
+env.gravity = (math.pi, 0.0005)
+
 # Generate 10 particles randomly.
 env.addParticles(10)
 running = True
@@ -46,12 +50,17 @@ while running:
         # User picks up a particle - find it in the environment.
         elif event.type == pygame.MOUSEBUTTONDOWN:
             selectedParticle = env.findParticle(event.pos)
-            if selectedParticle:
+            if selectedParticle == None:
+                pass
+            else:
                 selectedParticle.colour = (255,0,0)
         # User relases a particle, deselect.
         elif event.type == pygame.MOUSEBUTTONUP:
-            selectedParticle.colour = (0,0,255)
-            selectedParticle = None
+            if selectedParticle == None:
+                pass
+            else:
+                selectedParticle.colour = (0,0,255)
+                selectedParticle = None
         # User moves the mouse with the selected particle - move it in the environment.
         elif selectedParticle and event.type == pygame.MOUSEMOTION:
             (mouseX, mouseY) = event.pos
