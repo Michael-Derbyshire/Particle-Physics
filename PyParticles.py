@@ -23,6 +23,7 @@ class Environment:
         self.width = width
         self.height = height
         self.particles = []
+        self.springs = []
         self.colour = (255, 255, 255)
         self.massOfAir = 0.2
         self.particleFunctions1 = []
@@ -56,6 +57,10 @@ class Environment:
             
             # Add to the collection on particles.
             self.particles.append(p)
+            
+        # Adds a spring between p1 & p2.
+    def addSpring(self, p1, p2, length=50, strength=0.5):
+        self.springs.append(Spring(self.particles[p1], self.particles[p2], length, strength))
     
     # Bounce off a boundary.
     def bounce(self, particle):
@@ -81,6 +86,10 @@ class Environment:
             particle.angle = math.pi - particle.angle      
             
     def update(self):
+        
+        # Exert Spring forces
+        for spring in self.springs:
+            spring.update() 
         # Loop through all particles.
         for i, particle in enumerate(self.particles):
             # Call single and double particle functions through Lambda functions.
@@ -206,4 +215,27 @@ class Particle:
         dy = y - self.y
         # Work out relative angle and speed.
         self.angle = 0.5*math.pi + math.atan2(dy, dx)
-        self.speed = math.hypot(dx, dy) * 0.1     
+        self.speed = math.hypot(dx, dy) * 0.1 
+        
+# Spring Class
+class Spring:
+    def __init__(self, p1, p2, length=50, strength=0.5):
+        self.p1 = p1
+        self.p2 = p2
+        self.length = length
+        self.strength = strength
+    
+    # This pulls the strings together.
+    def update(self):
+        # Calculate distance between particles.
+        dx = self.p1.x - self.p2.x
+        dy = self.p1.y - self.p2.y
+        dist = math.hypot(dx, dy)
+        # Calculate the angle.
+        theta = math.atan2(dy, dx)
+        # Attraction force that stops when lenght of spring is reached.
+        force = (self.length - dist) * self.strength
+        
+        # Push the particles closer to eachother.
+        self.p1.accelerate((theta + 0.5 * math.pi, force/self.p1.mass))
+        self.p2.accelerate((theta + 0.5 * math.pi, force/self.p2.mass))
