@@ -34,7 +34,7 @@ for p in range(4):
     
 universe.addSpring(0,1, length=100, strength=0.01)
 universe.addSpring(1,2, length=100, strength=0.01)
-universe.addSpring(2,0, length=80, strength=0.01)
+universe.addSpring(2,0, length=100, strength=0.01)
 
 # Variables for selecting springs
 springSelectOne = None
